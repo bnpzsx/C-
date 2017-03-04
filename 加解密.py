@@ -1,12 +1,19 @@
 def encry(text,n ):
-    result=""
+    result=''
     # text=text+"#"
     for i in text:
-        result=result + chr(ord(i)^n)
+        try:  
+            result=result + chr(ord(i)^n)
+        except:
+            result=result + chr(i^n)
+        else:
+            pass;
     return result
+
 def decry(text,n):
     # text=text[0:-1]
     return encry(text,n)
+
 def cchr(text,fgf):
     result=""
     asc=0
@@ -18,6 +25,7 @@ def cchr(text,fgf):
             result=result+chr(asc)
             asc=0
     return result
+
 def  aasc(text,fgf):
     result=""
     for i in text:
