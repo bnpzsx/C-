@@ -1,13 +1,13 @@
 关键字
 and		exec		not
 assert		finally		or
-break		for			pass
+break		for		pass
 class		from		print
 continue 	global		raise
-def		if			return
+def		if		return
 del		import		try
-elif		in			while
-else		is			with
+elif		in		while
+else		is		with
 except		lambda		yield
 
 IndentationError: unindent does not match any outer indentation level错误表明，你使用的缩进方式不一致，
