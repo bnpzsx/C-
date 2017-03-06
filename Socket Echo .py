@@ -20,23 +20,28 @@ def accept():
         global con
         con=1
         threading.Thread(target = recive, args = com[index], name = 'thread-' + 'addr[0]').start()
+        c.send(b"input something")
         
 def recive(s,a):
     '循环检查消息'
     L[1]()
     print("%d开始监视缓冲区" % com.index((s,a)))
     L[2]()
+    global con
     while 1:
         try:
             Str=s.recv(1024)
             string=bytes.decode(Str)
-            if string!="": #当客户端异常退出时，缓冲区不为空，但转换为字符串后为空
+            if string!="":
                 L[1]()
-                print(string)
+                if con==1:
+                    print("Server received:",string)
+                else:
+                    print(string)
                 L[2]()
-                global con
                 if con==1:
                     s.send(Str) #Echo
+                    s.send(b"input something")
         except ConnectionResetError:
                 L[1]()
                 print("%d %s断开连接" % (com.index((s,a)),a))
@@ -112,3 +117,4 @@ while 1:
     if con!=2:continue
     sendall(input(""))
     
+
