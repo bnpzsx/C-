@@ -21,7 +21,7 @@ if sg=="1":
             print("连接失败，%d,尝试重新连接" % err)
     while(1) :
         str=a.recv(256)
-        if str!="":
+        if str!=b"":
             print (加解密.encry(a.recv(1024),13)[:-1])
             
 elif sg=="2":
