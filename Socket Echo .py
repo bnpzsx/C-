@@ -28,15 +28,14 @@ def recive(s,a):
     L[2]()
     while 1:
         try:
-            str=s.recv(1024)
-            if str!="":
+            Str=s.recv(1024) #之前用关键字str没有报错
+            if Str!="":
                 L[1]()
-                print(
-                    str)
+                print(bytes.decode(Str))
                 L[2]()
                 global con
                 if con==1:
-                    s.send(str) #Echo
+                    s.send(Str) #Echo
         except ConnectionResetError:
                 L[1]()
                 print("%d %s断开连接" % (com.index((s,a)),a))
@@ -46,7 +45,7 @@ def recive(s,a):
 
 def sendall(text,s=1):
     for i in range(s,len(com)):
-            com[i][0].send(text.encode(encoding='utf_8'))
+            com[i][0].send(str.encode(text))
         
             
 def load():
