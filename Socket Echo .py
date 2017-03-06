@@ -28,10 +28,11 @@ def recive(s,a):
     L[2]()
     while 1:
         try:
-            Str=s.recv(1024) #之前用关键字str没有报错
-            if Str!="":
+            Str=s.recv(1024)
+            string=bytes.decode(Str)
+            if string!="": #当客户端异常退出时，缓冲区不为空，但转换为字符串后为空
                 L[1]()
-                print(bytes.decode(Str))
+                print(string)
                 L[2]()
                 global con
                 if con==1:
@@ -111,4 +112,3 @@ while 1:
     if con!=2:continue
     sendall(input(""))
     
-
