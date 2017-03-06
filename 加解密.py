@@ -2,12 +2,10 @@ def encry(text,n ):
     result=''
     # text=text+"#"
     for i in text:
-        try:  
+        if type(i)==str:  
             result=result + chr(ord(i)^n)
-        except:
-            result=result + chr(i^n)
         else:
-            pass;
+            result=result + chr(i^n)
     return result
 
 def decry(text,n):
