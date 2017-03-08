@@ -13,15 +13,18 @@ class node:
 
 class linklist:
     root=None
-    def append(self,data):
-        if data==self:return False #添加自身引用在print时会死循环
-        i=self.root
-        if i!=None:
-            while i.next!=None:
-                i=i.next
-            i.next=node(data,i)
-        else:
-            self.root=node(data)
+    def append(self,data,*more):
+        more=(data,)+more # more是元组
+        for data in more:
+            if data==self:return False #添加自身引用在print时会死循环
+            i=self.root
+            if i!=None:
+                while i.next!=None:
+                    i=i.next
+                i.next=node(data,i)
+            else:
+                self.root=node(data)
+
         
     def find(self,data):
         if self.root==None:return None
@@ -75,4 +78,3 @@ class linklist:
             i=i.pre
             del i.next
             
-
