@@ -25,7 +25,7 @@ class HashTable:
         if d==None :
             self.table[i].append(key,item(key,value))
         else:
-            d.next.data=value #每个item正好存在key的后面
+            d.next.data.value=value #每个item正好存在key的后面
         
     def get(self,key):
         i=hash(key)% 7  
