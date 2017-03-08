@@ -1,3 +1,4 @@
+
 class node:
     pre=None
     next=None
@@ -7,9 +8,6 @@ class node:
         self.pre=pre
         self.next=next
         # print("creat a node",data)
-
-    def __del__(self):pass
-        # print("del a node",self.data)
 
 class linklist:
     root=None
@@ -26,18 +24,30 @@ class linklist:
                 self.root=node(data)
 
         
-    def find(self,data):
+    def find(self,data,index=-1):#当index为data中要找的数据下标
         if self.root==None:return None
         i=self.root
-        while i.next!=None and i.data!=data:
-            i=i.next
-        if i.data==data:
-            return i
+        if index==-1:
+            while i.next!=None and i.data!=data:
+                i=i.next
+            if i.data==data:
+                return i
+            else:
+                return None
         else:
-            return None
+            while i.next!=None and i.data[index]!=data:
+                    i=i.next
+            if i.data[index]==data:
+                    return i
+            else:
+                return None
+                
 
-    def remove(self,data):
-        i=self.find(data)
+    def remove(self,data,isNode=False): #增加直接删除节点功能
+        if isNode:
+            i=data
+        else:
+            i=self.find(data)
         if i==None:
             return False
         else:
@@ -50,6 +60,7 @@ class linklist:
                 i.next.pre=i.pre
             del i
             return True
+
 
     def cstr(self,data):
         if type(data)==str:
