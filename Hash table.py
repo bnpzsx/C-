@@ -1,9 +1,23 @@
 import LinkedList
 
+def hash(key):
+    prime=10007
+    if type(key)==int:
+        return key
+    elif type(key)==str:
+        x=id(key)
+        for i in key:
+            #print(x)
+            x=(prime*x)^id(i) 
+        x^=len(key)
+        return x
+    else:
+        return id(key)
+
 class HashTable:
-    size=9973
+    size=40289 #9973 49999 
     table=[]
-    def __init__(self,size=9973):
+    def __init__(self,size=324757): #内存与数组大小不成比例
         self.size=size
         self.table=[LinkedList.linklist() for i in range(self.size)] #之前只是建立了n个引用
         print("建立Hash表")
@@ -27,6 +41,7 @@ class HashTable:
     def hdel(self,key):
         i=hash(key)% self.size 
         d=self.table[i].find(key,0)
+        
         if d==None :
             return False
         else:
@@ -43,4 +58,15 @@ class HashTable:
                 n=n.next
             r.append(n.data[0])
         return r
+
+'''
+ #测试代码
+import time
+a=HashTable()
+start = time.time()
+for i in range(100000):
+    a.set(str(i)+str(i+1)+str(i+3),i)
+end = time.time()
+print ("总用时",end-start)
+'''
 
