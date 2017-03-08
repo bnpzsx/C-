@@ -6,7 +6,10 @@ class node:
         self.data=data
         self.pre=pre
         self.next=next
-        print("creat a node",data)
+        # print("creat a node",data)
+
+    def __del__(self):pass
+        # print("del a node",self.data)
 
 class linklist:
     root=None
@@ -62,5 +65,14 @@ class linklist:
                 i=i.next
             string=string+self.cstr(i.data)+']'
         return string
+
+    def __del__(self):
+        i=self.root
+        if i==None:return
+        while i.next!=None:
+            i=i.next
+        while i.pre!=None:
+            i=i.pre
+            del i.next
             
-        
+
