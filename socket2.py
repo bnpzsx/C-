@@ -12,6 +12,8 @@ class mysocket():
     
     def acpt(self,who):pass
 
+    def con(self):pass
+    
     def accept(self):
         '接收客户端连接'
         while 1:
@@ -36,14 +38,20 @@ class mysocket():
                     self.L[1]()
                     print("%d %s断开连接" % (self.com.index((s,a)),a))
                     self.L[2]()
-                    self.com.remove((s,a))
+                    try :
+                        self.com.remove((s,a))
+                    except ValueError:
+                        pass
                     return
 
     def sendall(self,text,s=1):
         for i in range(s,len(self.com)):
+            try:
                 self.com[i][0].send(str.encode(text))
+            except ConnectionResetError:
+                self.com.remove(self.com[i])
+                continue
             
-                
     def load(self):
         '服务器初始化'
         while 1:
@@ -58,7 +66,7 @@ class mysocket():
                 print("%s在端口%d绑定成功"%(host,port))
                 break
         self.com[0].listen(5)
-        Thread(target = self.accept, args = (), name = 'thread-' + '0').start()
+        Thread(target = self.accept, args = (), name = 'thread-' + 'listen').start()
         return
 
     def connect(self):
@@ -89,7 +97,9 @@ class mysocket():
                 else:
                     ok=1
                     break
-            if ok==1:break
+            if ok==1:
+                self.con()
+                break
 
         print("连接成功")
         self.com.append((self.com[0],'服务器'))
