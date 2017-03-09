@@ -29,6 +29,7 @@ class HashTable:
             self.table[i].append([key,value]) # 数据以[key,value]的形式存于链表中
         else:
             d.data[1]=value 
+        return True
         
     def get(self,key):
         i=hash(key)% self.size 
