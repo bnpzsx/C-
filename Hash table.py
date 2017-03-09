@@ -5,7 +5,7 @@ def hash(key):
     if type(key)==int:
         return key
     elif type(key)==str:
-        x=id(key)
+        x=1 #解决id(key)会变的问题
         for i in key:
             #print(x)
             x=(prime*x)^id(i) 
