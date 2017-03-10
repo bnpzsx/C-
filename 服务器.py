@@ -42,9 +42,9 @@ class hashpool():
 newhash=Hash_table.HashTable
 hbase=hashpool()
 user=newhash(100)
-user.set("admin",hash("admin"))
-user.set("root",hash("admin"))
-user.set("bnpzsx",hash("root"))
+user.set("admin",("admin"))
+user.set("root",("admin"))
+user.set("bnpzsx",("root"))
 
 work=[] #事务表
 back=[] #回滚列表
@@ -84,7 +84,7 @@ def respond(string,who=None,sta=None):
     '根据命令操作数据库'
     
     which=user.get(who)
-    print(string,",",who,",",which)
+    #print(string,",",who,",",which)
     if which==False or which==["wait"]:
         g=user.get(string)
         if g==False:
@@ -92,16 +92,16 @@ def respond(string,who=None,sta=None):
         else:
             which=[]
             which.append("pass")
-            which.append(g) # hash(password)
-            which.append(string) #which[2]
+            which.append(g) # hash(password)，问题在这
+            which.append(string) # which[2]
             user.set(who,which) # 列表似乎不是引用
             return "password:"
     elif which[0]=="pass":
-        if which[1]==hash(string):
+        if which[1]==string: #验证密码
             which[0]="succeed"
             who=which[2]
             user.set(who,which)
-            print("string",hash(string),which[1])
+            #print("success",hash(string),which[1])
             return "login successfully!"
         else:
             return "wrong password"+'\n'+"password:"
@@ -115,7 +115,7 @@ def respond(string,who=None,sta=None):
         return 事务处理(string,who)
     c=str.split(string," ")
     lens=len(c)
-    if lens>=2 and c[1][0]=='h':c[1]=who+'_'+c[1] # 加上区分用户的标志
+    if lens>=2 and c[0][0]=='h':c[1]=who+'_'+c[1] # 加上区分用户的标志
     r=None
     if c[0]=="multi" and lens==1:
         r="OK"
@@ -125,9 +125,9 @@ def respond(string,who=None,sta=None):
         if sta=="multi":
             x=hbase.get(who,c[1])
             if x!=False:
-                back.append("set "+who+" "+c[1]+" "+x)
+                back.append("set "+c[1]+" "+x)
             else:
-                back.append("delete "+who+" "+c[1])
+                back.append("delete "+c[1])
         
         r=hbase.set(who,c[1],c[2])
     elif c[0]=="get" and lens==2:
