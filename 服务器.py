@@ -84,26 +84,31 @@ def respond(string,who=None,sta=None):
     '根据命令操作数据库'
     
     which=user.get(who)
+    print(string,",",who,",",which)
     if which==False or which==["wait"]:
-        user.set(who,["wait"])
-        which=user.get(who)
-        if which==None:return False
         g=user.get(string)
         if g==False:
             return "wrong username"+'\n'+"username:"
         else:
+            which=[]
+            which.append("pass")
             which.append(g) # hash(password)
             which.append(string) #which[2]
-            which[0]=="pass"
+            user.set(who,which) # 列表似乎不是引用
             return "password:"
     elif which[0]=="pass":
         if which[1]==hash(string):
             which[0]="succeed"
             who=which[2]
+            user.set(who,which)
             print("string",hash(string),which[1])
             return "login successfully!"
         else:
             return "wrong password"+'\n'+"password:"
+    elif which[0]=="succeed":
+        who=which[2]
+    else:
+        return "False"
     global work
     global back
     if work!=[]:
@@ -172,7 +177,7 @@ def respond(string,who=None,sta=None):
 class server(socket2.mysocket):
     def recv(self,who,string):
         print("Server received:",string)
-        who[0].send(str.encode(respond(string,who[1])))
+        who[0].send(str.encode(respond(string,str(who[1]))))
 
     def acpt(self,who):
         who[0].send(b"Connect Success\nusernamme:")
