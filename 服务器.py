@@ -3,7 +3,7 @@ import Hash_table
 
 class hashpool():
     
-    base=Hash_table.HashTable()
+    base=Hash_table.HashTable(10007)
     #find=lambda key:base.table[Hash_table.hash(key)% base.size].find(key,0) 
 
     def set(self,w,key,value):
@@ -40,8 +40,12 @@ class hashpool():
             return h.keys()
         
 newhash=Hash_table.HashTable
-base=newhash()
 hbase=hashpool()
+user=newhash(100)
+user.set("admin",hash("admin"))
+user.set("root",hash("admin"))
+user.set("bnpzsx",hash("root"))
+
 work=[] #事务表
 back=[] #回滚列表
 
@@ -55,13 +59,13 @@ def 事务处理(string,who):
         print(temp)
         for i in temp:
             'who.send(str.encode(respond(i),who))'
-            result=respond(i,"me")
+            result=respond(i,who,"multi")
             s+=result+'\n'
             if result=="False" or result=="Illegal Input":
                 back=back[::-1] #倒序
                 print(back)
                 for i in back:
-                    respond(i,"back")
+                    respond(i,who,"back")
                 break
         back=[]    
         if s=="":return "empty routine"
@@ -76,43 +80,66 @@ def 事务处理(string,who):
         work.append(string)
         return "QUEUED"
     
-def respond(string,who=None):
+def respond(string,who=None,sta=None):
     '根据命令操作数据库'
+    
+    which=user.get(who)
+    if which==False or which==["wait"]:
+        user.set(who,["wait"])
+        which=user.get(who)
+        if which==None:return False
+        g=user.get(string)
+        if g==False:
+            return "wrong username"+'\n'+"username:"
+        else:
+            which.append(g) # hash(password)
+            which.append(string) #which[2]
+            which[0]=="pass"
+            return "password:"
+    elif which[0]=="pass":
+        if which[1]==hash(string):
+            which[0]="succeed"
+            who=which[2]
+            print("string",hash(string),which[1])
+            return "login successfully!"
+        else:
+            return "wrong password"+'\n'+"password:"
     global work
     global back
     if work!=[]:
         return 事务处理(string,who)
     c=str.split(string," ")
     lens=len(c)
+    if lens>=2 and c[1][0]=='h':c[1]=who+'_'+c[1] # 加上区分用户的标志
     r=None
     if c[0]=="multi" and lens==1:
         r="OK"
         work.append("start")
         
     elif c[0]=="set" and lens==3:
-        if who=="me":
-            x=base.get(c[1])
+        if sta=="multi":
+            x=hbase.get(who,c[1])
             if x!=False:
-                back.append("set "+c[1]+" "+x)
+                back.append("set "+who+" "+c[1]+" "+x)
             else:
-                back.append("delete "+c[1])
+                back.append("delete "+who+" "+c[1])
         
-        r=base.set(c[1],c[2])
+        r=hbase.set(who,c[1],c[2])
     elif c[0]=="get" and lens==2:
-        r=base.get(c[1])
+        r=hbase.get(who,c[1])
         if r==False:
             r="None"
     elif c[0]=="delete" and lens==2:
-        if who=="me":
-            x=base.get(c[1])
+        if sta=="multi":
+            x=bhase.get(who,c[1])
             if x!=False:
-                back.append("set "+c[1]+" "+x)
+                back.append("set "+who+" "+c[1]+" "+x)
             else:
                 pass # 删除None没影响，甚至会直接back
                 
-        r=base.hdel(c[1])
+        r=hbase.hdel(who,c[1])
     elif c[0]=="hset" and lens==4:
-        if who=="me":
+        if sta=="multi":
             x=hbase.get(c[1],c[2])
             if x!=False:
                 back.append("hset "+c[1]+" "+c[2]+" "+x)
@@ -145,12 +172,10 @@ def respond(string,who=None):
 class server(socket2.mysocket):
     def recv(self,who,string):
         print("Server received:",string)
-        who[0].send(str.encode(respond(string,who[0])))
-        '''try:who[0].send(str.encode(respond(string,who[0])))
-        except:pass'''
+        who[0].send(str.encode(respond(string,who[1])))
 
     def acpt(self,who):
-        who[0].send(b"Connect Success")
+        who[0].send(b"Connect Success\nusernamme:")
         
 s=server()
 s.load()
