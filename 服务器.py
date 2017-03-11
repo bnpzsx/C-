@@ -86,33 +86,33 @@ def respond(string,who=None,sta=None):
     which=user.get(who)
     #print(string,",",who,",",which)
     if which==False or which==["wait"]:
-        g=user.get(string)
+        g=user.get(string)[:] #深复制 防止数据被修改
         if g==False:
             return "wrong username"+'\n'+"username:"
         else:
             which=[]
             which.append("pass")
-            which.append(g) # hash(password)，问题在这
+            which.append(g) # hash(password)
             which.append(string) # which[2]
             user.set(who,which) # 列表似乎不是引用
             return "password:"
     elif which[0]=="pass":
         if which[1]==string: #验证密码
             which[0]="succeed"
-            who=which[2]
+            # who=which[2] 这一行修改了密码
             user.set(who,which)
-            #print("success",hash(string),which[1])
             return "login successfully!"
         else:
             return "wrong password"+'\n'+"password:"
     elif which[0]=="succeed":
+        temp=who
         who=which[2]
     else:
         return "False"
     global work
     global back
     if work!=[]:
-        return 事务处理(string,who)
+        return 事务处理(string,temp)
     c=str.split(string," ")
     lens=len(c)
     if lens>=2 and c[0][0]=='h':c[1]=who+'_'+c[1] # 加上区分用户的标志
@@ -136,9 +136,9 @@ def respond(string,who=None,sta=None):
             r="None"
     elif c[0]=="delete" and lens==2:
         if sta=="multi":
-            x=bhase.get(who,c[1])
+            x=hbase.get(who,c[1])
             if x!=False:
-                back.append("set "+who+" "+c[1]+" "+x)
+                back.append("set "+c[1]+" "+x)
             else:
                 pass # 删除None没影响，甚至会直接back
                 
@@ -147,9 +147,9 @@ def respond(string,who=None,sta=None):
         if sta=="multi":
             x=hbase.get(c[1],c[2])
             if x!=False:
-                back.append("hset "+c[1]+" "+c[2]+" "+x)
+                back.append("hset "+c[1][len(who)+1:]+" "+c[2]+" "+x)
             else:
-                back.append("hdelete "+c[1]+" "+c[2])
+                back.append("hdelete "+c[1][len(who)+1:]+" "+c[2])
 
         r=hbase.set(c[1],c[2],c[3])
     elif c[0]=="hget" and lens==3:
@@ -160,7 +160,7 @@ def respond(string,who=None,sta=None):
         if who=="me":
             x=hbase.get(c[1],c[2])
             if x!=False:
-                back.append("hset "+c[1]+" "+c[2]+" "+x)
+                back.append("hset "+c[1][len(who)+1:]+" "+c[2]+" "+x)
             else:
                 pass
         r=hbase.hdel(c[1],c[2])
