@@ -1,3 +1,5 @@
+from threading import Thread
+from time import sleep
 import socket2
 import Hash_table
 import rwx
@@ -206,12 +208,16 @@ class server(socket2.mysocket):
 
     def acpt(self,who):
         who[0].send(b"Connect Success\nusernamme:")
+
+def autosave(t=300):
+    while 1:
+        sleep(t)
+        save()
         
 s=server()
 s.load()
 load()
-from time import sleep
-while 1:
-    sleep(1) 
-    #save()
-    
+Thread(target = autosave, name = 'thread-' + 'save').start()
+while 1:sleep(0.2)
+
+
