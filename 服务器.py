@@ -1,5 +1,9 @@
 import socket2
 import Hash_table
+import rwx
+
+file=rwx.MyFile
+newhash=Hash_table.HashTable
 
 class hashpool():
     
@@ -39,9 +43,9 @@ class hashpool():
         else:
             return h.keys()
         
-newhash=Hash_table.HashTable
 hbase=hashpool()
 user=newhash(100)
+path="d:/DateBase/"
 user.set("admin",("admin"))
 user.set("root",("admin"))
 user.set("bnpzsx",("root"))
@@ -50,12 +54,27 @@ work=[] #事务表
 back=[] #回滚列表
 
 def save():
+    rwx.createdic(path)
+    print("保存数据")
     for i in hbase.base.keys():
-        print("In hash:",i)
+        f=file(path+i)
         t=hbase.base.get(i)
+        f.rewrite("") # 清空文件
         for j in t.keys():
-            print(j,t.get(j))
+            f.write(j+" "+t.get(j)+'\n')
 
+def load():
+    rwx.createdic(path)
+    print("读取数据")
+    for i in rwx.allfile(path):
+        f=file(i)
+        h=newhash()
+        for s in f.read():
+            print(s)
+            s=str.split(s," ")
+            h.set(s[0],s[1][:-1])
+        hbase.base.set(f.name(),h)
+            
 def 事务处理(string,who):
     global work
     global back
@@ -92,7 +111,7 @@ def respond(string,who=None,sta=None):
     
     which=user.get(who)
     if which==False or which==["wait"]:
-        g=user.get(string)[:] #深复制 防止数据被修改
+        g=user.get(string)
         if g==False:
             return "wrong username"+'\n'+"username:"
         else:
@@ -188,5 +207,9 @@ class server(socket2.mysocket):
         
 s=server()
 s.load()
+load()
 from time import sleep
-while 1:sleep(0.1)
+while 1:
+    sleep(300) #5分钟保存一次
+    save()
+    
