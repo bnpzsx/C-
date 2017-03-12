@@ -4,13 +4,13 @@ import Hash_table
 class hashpool():
     
     base=Hash_table.HashTable(10007)
-    #find=lambda key:base.table[Hash_table.hash(key)% base.size].find(key,0) 
 
     def set(self,w,key,value):
+        
         h=self.base.get(w)
         if h==False:
             print("Create hash",w)
-            self.base.set(w,Hash_table.HashTable()) 
+            self.base.set(w,Hash_table.HashTable())
         h=self.base.get(w)
         if h==False: 
             return False
@@ -49,6 +49,13 @@ user.set("bnpzsx",("root"))
 work=[] #事务表
 back=[] #回滚列表
 
+def save():
+    for i in hbase.base.keys():
+        print("In hash:",i)
+        t=hbase.base.get(i)
+        for j in t.keys():
+            print(j,t.get(j))
+
 def 事务处理(string,who):
     global work
     global back
@@ -84,7 +91,6 @@ def respond(string,who=None,sta=None):
     '根据命令操作数据库'
     
     which=user.get(who)
-    #print(string,",",who,",",which)
     if which==False or which==["wait"]:
         g=user.get(string)[:] #深复制 防止数据被修改
         if g==False:
@@ -94,13 +100,11 @@ def respond(string,who=None,sta=None):
             which.append("pass")
             which.append(g) # hash(password)
             which.append(string) # which[2]
-            user.set(who,which) # 列表似乎不是引用
+            user.set(who,which)
             return "password:"
     elif which[0]=="pass":
         if which[1]==string: #验证密码
             which[0]="succeed"
-            # who=which[2] 这一行修改了密码
-            user.set(who,which)
             return "login successfully!"
         else:
             return "wrong password"+'\n'+"password:"
