@@ -36,9 +36,8 @@ class MyFile:
             self.file.write(string)
         except Exception as err:
             print("追加失败", err)
-        else:
-            print("追加成功")
-        self.file.close()
+        finally:
+            self.file.close()
 
         
     def read(self):
@@ -49,7 +48,7 @@ class MyFile:
 
     def rewrite(self, string):
         self.file = open(self.path, "w")
-        self.write(string)
+        self.file.write(string)
         self.file.close()
   
     def name(self):

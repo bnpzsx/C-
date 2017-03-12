@@ -10,7 +10,6 @@ class hashpool():
     base=Hash_table.HashTable(10007)
 
     def set(self,w,key,value):
-        
         h=self.base.get(w)
         if h==False:
             print("Create hash",w)
@@ -57,11 +56,13 @@ def save():
     rwx.createdic(path)
     print("保存数据")
     for i in hbase.base.keys():
+        s=""
         f=file(path+i)
         t=hbase.base.get(i)
         f.rewrite("") # 清空文件
         for j in t.keys():
-            f.write(j+" "+t.get(j)+'\n')
+            s+=j+" "+t.get(j)+'\n'
+        f.write(s)
 
 def load():
     rwx.createdic(path)
@@ -74,6 +75,7 @@ def load():
             s=str.split(s," ")
             h.set(s[0],s[1][:-1])
         hbase.base.set(f.name(),h)
+    print("读取完成")
             
 def 事务处理(string,who):
     global work
@@ -210,6 +212,6 @@ s.load()
 load()
 from time import sleep
 while 1:
-    sleep(300) #5分钟保存一次
-    save()
+    sleep(1) 
+    #save()
     
